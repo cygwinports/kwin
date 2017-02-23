@@ -1,0 +1,51 @@
+--- origsrc/kwin-5.4.3/compositingprefs.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/compositingprefs.cpp	2017-02-06 11:29:25.069096400 -0600
+@@ -59,7 +59,7 @@ bool CompositingPrefs::compositingPossib
+     // first off, check whether we figured that we'll crash on detection because of a buggy driver
+     KConfigGroup gl_workaround_group(KSharedConfig::openConfig(), "Compositing");
+     const QString unsafeKey(QStringLiteral("OpenGLIsUnsafe") + (is_multihead ? QString::number(screen_number) : QString()));
+-    if (gl_workaround_group.readEntry("Backend", "OpenGL") == QStringLiteral("OpenGL") &&
++    if (gl_workaround_group.readEntry("Backend", "XRender") == QStringLiteral("OpenGL") &&
+         gl_workaround_group.readEntry(unsafeKey, false))
+         return false;
+ 
+@@ -94,7 +94,7 @@ QString CompositingPrefs::compositingNot
+     // first off, check whether we figured that we'll crash on detection because of a buggy driver
+     KConfigGroup gl_workaround_group(KSharedConfig::openConfig(), "Compositing");
+     const QString unsafeKey(QStringLiteral("OpenGLIsUnsafe") + (is_multihead ? QString::number(screen_number) : QString()));
+-    if (gl_workaround_group.readEntry("Backend", "OpenGL") == QStringLiteral("OpenGL") &&
++    if (gl_workaround_group.readEntry("Backend", "XRender") == QStringLiteral("OpenGL") &&
+         gl_workaround_group.readEntry(unsafeKey, false))
+         return i18n("<b>OpenGL compositing (the default) has crashed KWin in the past.</b><br>"
+                     "This was most likely due to a driver bug."
+--- origsrc/kwin-5.4.3/kcmkwin/kwincompositing/compositing.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/kcmkwin/kwincompositing/compositing.cpp	2017-02-06 11:30:25.014722800 -0600
+@@ -97,7 +97,7 @@ void Compositing::reset()
+     setGlColorCorrection(kwinConfig.readEntry("GLColorCorrection", false));
+ 
+     auto type = [&kwinConfig]{
+-        const QString backend = kwinConfig.readEntry("Backend", "OpenGL");
++        const QString backend = kwinConfig.readEntry("Backend", "XRender");
+         const bool glCore = kwinConfig.readEntry("GLCore", false);
+ 
+         if (backend == QStringLiteral("OpenGL")) {
+@@ -146,7 +146,7 @@ bool Compositing::OpenGLIsBroken()
+                                              QDBusConnection::sessionBus());
+     KConfigGroup kwinConfig(KSharedConfig::openConfig("kwinrc"), "Compositing");
+ 
+-    QString oldBackend = kwinConfig.readEntry("Backend", "OpenGL");
++    QString oldBackend = kwinConfig.readEntry("Backend", "XRender");
+     kwinConfig.writeEntry("Backend", "OpenGL");
+     kwinConfig.sync();
+ 
+--- origsrc/kwin-5.4.3/options.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/options.cpp	2017-02-05 17:38:03.175628500 -0600
+@@ -890,7 +890,7 @@ bool Options::loadCompositingConfig (boo
+ 
+     bool useCompositing = false;
+     CompositingType compositingMode = NoCompositing;
+-    QString compositingBackend = config.readEntry("Backend", "OpenGL");
++    QString compositingBackend = config.readEntry("Backend", "XRender");
+     if (compositingBackend == QStringLiteral("XRender"))
+         compositingMode = XRenderCompositing;
+     else if (compositingBackend == "QPainter")

@@ -1,0 +1,170 @@
+--- origsrc/kwin-5.4.3/autotests/CMakeLists.txt	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/autotests/CMakeLists.txt	2016-11-27 22:33:39.325417300 -0600
+@@ -1,4 +1,5 @@
+ add_definitions(-DKWIN_UNIT_TEST)
++add_definitions(-DKWIN_STATIC_DEFINE)
+ 
+ ########################################################
+ # Test ScreenPaintData
+--- origsrc/kwin-5.4.3/effects/effect_builtins.h	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/effects/effect_builtins.h	2016-11-27 15:55:10.849493400 -0600
+@@ -92,16 +92,16 @@ struct EffectData {
+     std::function<bool()> enabledFunction;
+ };
+ 
+-KWINEFFECTS_EXPORT Effect *create(BuiltInEffect effect);
+-KWINEFFECTS_EXPORT bool available(const QString &name);
+-KWINEFFECTS_EXPORT bool supported(BuiltInEffect effect);
+-KWINEFFECTS_EXPORT bool checkEnabledByDefault(BuiltInEffect effect);
+-KWINEFFECTS_EXPORT bool enabledByDefault(BuiltInEffect effect);
+-KWINEFFECTS_EXPORT QString nameForEffect(BuiltInEffect effect);
+-KWINEFFECTS_EXPORT BuiltInEffect builtInForName(const QString &name);
+-KWINEFFECTS_EXPORT QStringList availableEffectNames();
+-KWINEFFECTS_EXPORT QList<BuiltInEffect> availableEffects();
+-KWINEFFECTS_EXPORT const EffectData &effectData(BuiltInEffect effect);
++Effect *create(BuiltInEffect effect);
++bool available(const QString &name);
++bool supported(BuiltInEffect effect);
++bool checkEnabledByDefault(BuiltInEffect effect);
++bool enabledByDefault(BuiltInEffect effect);
++QString nameForEffect(BuiltInEffect effect);
++BuiltInEffect builtInForName(const QString &name);
++QStringList availableEffectNames();
++QList<BuiltInEffect> availableEffects();
++const EffectData &effectData(BuiltInEffect effect);
+ }
+ 
+ }
+--- origsrc/kwin-5.4.3/kcmkwin/kwinrules/CMakeLists.txt	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/kcmkwin/kwinrules/CMakeLists.txt	2016-11-27 22:26:11.826751800 -0600
+@@ -1,6 +1,7 @@
+ # KI18N Translation Domain for this library
+ add_definitions(-DTRANSLATION_DOMAIN=\"kcmkwinrules\")
+ add_definitions(-DKCMRULES)
++add_definitions(-DKWIN_STATIC_DEFINE)
+ ########### next target ###############
+ 
+ set (kwinrules_MOC_HDRS yesnobox.h ../../client_machine.h ../../cursor.h)
+--- origsrc/kwin-5.4.3/kcmkwin/kwinrules/main.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/kcmkwin/kwinrules/main.cpp	2016-11-27 18:10:17.948310500 -0600
+@@ -245,7 +245,7 @@ static int edit(Window wid, bool whole_a
+ } // namespace
+ 
+ extern "C"
+-KWIN_EXPORT int kdemain(int argc, char* argv[])
++Q_DECL_EXPORT int kdemain(int argc, char* argv[])
+ {
+     QApplication app(argc, argv);
+     app.setApplicationDisplayName(i18n("KWin"));
+--- origsrc/kwin-5.4.3/libkwineffects/kwineffects.h	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/libkwineffects/kwineffects.h	2016-11-27 16:25:19.662921400 -0600
+@@ -226,7 +226,7 @@ enum EffectFrameStyle {
+ /**
+  * Infinite region (i.e. a special region type saying that everything needs to be painted).
+  */
+-KWINEFFECTS_EXPORT inline
++inline
+ QRect infiniteRegion()
+ {
+     // INT_MIN / 2 because width/height is used (INT_MIN+INT_MAX==-1)
+--- origsrc/kwin-5.4.3/libkwineffects/kwinglobals.h	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/libkwineffects/kwinglobals.h	2016-11-27 15:56:41.084910500 -0600
+@@ -128,7 +128,7 @@ enum PointerAxisDirection {
+ };
+ 
+ inline
+-KWIN_EXPORT Display* display()
++Display* display()
+ {
+     static Display *s_display = nullptr;
+     if (!s_display && QX11Info::isPlatformX11()) {
+@@ -138,7 +138,7 @@ KWIN_EXPORT Display* display()
+ }
+ 
+ inline
+-KWIN_EXPORT xcb_connection_t *connection()
++xcb_connection_t *connection()
+ {
+     static xcb_connection_t *s_con = nullptr;
+     if (!s_con) {
+@@ -148,7 +148,7 @@ KWIN_EXPORT xcb_connection_t *connection
+ }
+ 
+ inline
+-KWIN_EXPORT xcb_window_t rootWindow()
++xcb_window_t rootWindow()
+ {
+     static xcb_window_t s_rootWindow = XCB_WINDOW_NONE;
+     if (s_rootWindow == XCB_WINDOW_NONE) {
+@@ -158,13 +158,13 @@ KWIN_EXPORT xcb_window_t rootWindow()
+ }
+ 
+ inline
+-KWIN_EXPORT xcb_timestamp_t xTime()
++xcb_timestamp_t xTime()
+ {
+     return qApp->property("x11Time").value<xcb_timestamp_t>();
+ }
+ 
+ inline
+-KWIN_EXPORT xcb_screen_t *defaultScreen()
++xcb_screen_t *defaultScreen()
+ {
+     static xcb_screen_t *s_screen = nullptr;
+     if (s_screen) {
+@@ -182,14 +182,14 @@ KWIN_EXPORT xcb_screen_t *defaultScreen(
+ }
+ 
+ inline
+-KWIN_EXPORT int displayWidth()
++int displayWidth()
+ {
+     xcb_screen_t *screen = defaultScreen();
+     return screen ? screen->width_in_pixels : 0;
+ }
+ 
+ inline
+-KWIN_EXPORT int displayHeight()
++int displayHeight()
+ {
+     xcb_screen_t *screen = defaultScreen();
+     return screen ? screen->height_in_pixels : 0;
+--- origsrc/kwin-5.4.3/libkwineffects/kwinglutils.h	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/libkwineffects/kwinglutils.h	2016-11-27 16:24:37.935572300 -0600
+@@ -73,7 +73,7 @@ bool KWINGLUTILS_EXPORT hasGLExtension(c
+ // detect OpenGL error (add to various places in code to pinpoint the place)
+ bool KWINGLUTILS_EXPORT checkGLError(const char* txt);
+ 
+-inline bool KWINGLUTILS_EXPORT isPowerOfTwo(int x)
++inline bool isPowerOfTwo(int x)
+ {
+     return ((x & (x - 1)) == 0);
+ }
+--- origsrc/kwin-5.4.3/main_x11.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/main_x11.cpp	2016-11-27 18:08:59.758499400 -0600
+@@ -191,7 +191,7 @@ void ApplicationX11::performStartup()
+ } // namespace
+ 
+ extern "C"
+-KWIN_EXPORT int kdemain(int argc, char * argv[])
++Q_DECL_EXPORT int kdemain(int argc, char * argv[])
+ {
+     KWin::Application::setupMalloc();
+     KWin::Application::setupLocalizedString();
+--- origsrc/kwin-5.4.3/scripting/scriptingutils.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/scripting/scriptingutils.cpp	2016-11-27 17:48:11.435861900 -0600
+@@ -31,6 +31,7 @@ bool validateParameters(QScriptContext *
+     return true;
+ }
+ 
++#if 0
+ template<>
+ bool validateArgumentType<QVariant>(QScriptContext *context, int argument)
+ {
+@@ -42,5 +43,6 @@ bool validateArgumentType<QVariant>(QScr
+     }
+     return result;
+ }
++#endif
+ 
+ }

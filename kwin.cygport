@@ -1,0 +1,57 @@
+inherit kf5
+
+NAME="kwin"
+VERSION=5.4.3
+RELEASE=1
+CATEGORY="KDE"
+SUMMARY="KDE window manager"
+DESCRIPTION=
+
+PATCH_URI="
+	5.4.3-defaults.patch
+	5.4.3-dllimport.patch
+	5.4.3-input-cygwin.patch
+"
+
+PKG_NAMES="kwin kwin-devel"
+kwin_CONTENTS="
+	etc/postinstall/kwin.sh
+	etc/xdg/*.knsrc
+	etc/xdg/org_kde_kwin.categories
+	usr/bin/cygkdeinit5_kwin_rules_dialog.dll
+	usr/bin/cygkdeinit5_kwin_x11.dll
+	usr/bin/cygkwin-5.dll
+	usr/bin/cygkwin4_effect_builtins-1.dll
+	usr/bin/cygkwineffects-6.dll
+	usr/bin/cygkwinglutils-6.dll
+	usr/bin/cygkwinxrenderutils-6.dll
+	usr/bin/kwin_x11.exe
+	usr/lib/kconf_update_bin/kwin5_update_default_rules.exe
+	usr/lib/qt5/plugins/kcm_kwin*.dll
+	usr/lib/qt5/plugins/kwin/
+	usr/lib/qt5/plugins/kwincompositing.dll
+	usr/lib/qt5/plugins/org.kde.kdecoration2/kwin5_aurorae.dll
+	usr/lib/qt5/qml/org/kde/kwin/
+	usr/libexec/kwin_killer_helper.exe
+	usr/libexec/kwin_rules_dialog.exe
+	usr/share/config.kcfg/kwin.kcfg
+	usr/share/doc/HTML/en/kcontrol/*/
+	usr/share/doc/kwin/
+	usr/share/icons/hicolor/*/apps/kwin.*
+	usr/share/knotifications5/kwin.notifyrc
+	usr/share/kservices5/desktop.desktop
+	usr/share/kservices5/*kwin*.desktop
+	usr/share/kservices5/kwin/
+	usr/share/kservicetypes5/kwin*.desktop
+	usr/share/kwin/
+	usr/share/kwincompositing/
+	usr/share/locale/*/LC_MESSAGES/*
+"
+kwin_devel_REQUIRES="libepoxy-devel libKF5CoreAddons-devel libQt5Core-devel libQt5Gui-devel libQt5X11Extras-devel libxcb-devel libxcb-xfixes-devel"
+kwin_devel_CONTENTS="
+	usr/include/kwin*.h
+	usr/lib/cmake/KWinDBusInterface/
+	usr/lib/libkwin*.dll.a
+	usr/share/dbus-1/interfaces/org.kde.KWin.xml
+	usr/share/dbus-1/interfaces/org.kde.kwin.*
+"

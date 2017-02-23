@@ -1,0 +1,43 @@
+--- origsrc/kwin-5.4.3/input.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/input.cpp	2016-11-27 16:52:00.808014200 -0600
+@@ -54,7 +54,9 @@ along with this program.  If not, see <h
+ #include <xkbcommon/xkbcommon-keysyms.h>
+ #endif
+ // system
++#ifdef Q_OS_LINUX
+ #include <linux/input.h>
++#endif
+ #include <sys/mman.h>
+ #include <unistd.h>
+ 
+@@ -1081,6 +1083,7 @@ QEvent::Type InputRedirection::buttonSta
+ 
+ Qt::MouseButton InputRedirection::buttonToQtMouseButton(uint32_t button)
+ {
++#if HAVE_INPUT
+     switch (button) {
+     case BTN_LEFT:
+         return Qt::LeftButton;
+@@ -1093,6 +1096,7 @@ Qt::MouseButton InputRedirection::button
+     case BTN_FORWARD:
+         return Qt::XButton2;
+     }
++#endif
+     return Qt::NoButton;
+ }
+ 
+@@ -1173,12 +1177,14 @@ Toplevel *InputRedirection::findToplevel
+ uint8_t InputRedirection::toXPointerButton(uint32_t button)
+ {
+     switch (button) {
++#if HAVE_INPUT
+     case BTN_LEFT:
+         return XCB_BUTTON_INDEX_1;
+     case BTN_RIGHT:
+         return XCB_BUTTON_INDEX_3;
+     case BTN_MIDDLE:
+         return XCB_BUTTON_INDEX_2;
++#endif
+     default:
+         // TODO: add more buttons
+         return XCB_BUTTON_INDEX_ANY;
