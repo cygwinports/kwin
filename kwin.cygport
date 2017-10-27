@@ -2,7 +2,7 @@ inherit kf5
 
 NAME="kwin"
 VERSION=5.4.3
-RELEASE=1
+RELEASE=2
 CATEGORY="KDE"
 SUMMARY="KDE window manager"
 DESCRIPTION=
@@ -11,6 +11,7 @@ PATCH_URI="
 	5.4.3-defaults.patch
 	5.4.3-dllimport.patch
 	5.4.3-input-cygwin.patch
+	5.4.3-qt59.patch
 "
 
 PKG_NAMES="kwin kwin-devel"

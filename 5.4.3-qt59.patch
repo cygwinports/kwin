@@ -1,0 +1,11 @@
+--- origsrc/kwin-5.4.3/kcmkwin/kwincompositing/test/modeltest.cpp	2015-11-05 06:39:34.000000000 -0600
++++ src/kwin-5.4.3/kcmkwin/kwincompositing/test/modeltest.cpp	2017-10-24 23:55:14.108915300 -0500
+@@ -453,7 +453,7 @@ void ModelTest::data()
+     // Check that the alignment is one we know about
+     QVariant textAlignmentVariant = model->data ( model->index ( 0, 0 ), Qt::TextAlignmentRole );
+     if ( textAlignmentVariant.isValid() ) {
+-        int alignment = textAlignmentVariant.toInt();
++        const auto alignment = textAlignmentVariant.toUInt();
+         QCOMPARE( alignment, ( alignment & ( Qt::AlignHorizontal_Mask | Qt::AlignVertical_Mask ) ) );
+     }
+ 
